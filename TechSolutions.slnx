@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/Solution Items/" />
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="TechSolutions.Api/TechSolutions.Api.csproj" />
   <Project Path="TechSolutions.Web/TechSolutions.Web.csproj" Id="19dab200-e770-426c-8dc7-86a3974768bf" />
 </Solution>
