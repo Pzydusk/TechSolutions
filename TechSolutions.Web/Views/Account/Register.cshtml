@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Register</h2>
+
+<div class="mb-3">
+    <label>Email</label>
+    <input id="email" class="form-control" />
+</div>
+
+<div class="mb-3">
+    <label>Password</label>
+    <input id="password" type="password" class="form-control" />
+</div>
+
+<div id="error" class="text-danger mb-3"></div>
+
+<button class="btn btn-primary" onclick="register()">Register</button>
+<a href="/Account/Login" class="btn btn-secondary">Back to Login</a>
+
+<script>
+    const apiBase = "https://localhost:7045";
+
+    async function register() {
+        document.getElementById("error").innerText = "";
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const res = await fetch(`${apiBase}/api/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (!res.ok) {
+            const msg = await res.text();
+            document.getElementById("error").innerText = msg || "Registration failed";
+            return;
+        }
+
+        alert("Registration successful. Please login.");
+        window.location.href = "/Account/Login";
+    }
+</script>

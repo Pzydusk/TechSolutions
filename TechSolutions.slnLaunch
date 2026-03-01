@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "TechSolutions.Api\\TechSolutions.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "TechSolutions.Web\\TechSolutions.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

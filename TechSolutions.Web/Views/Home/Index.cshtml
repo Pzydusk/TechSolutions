@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4">TechSolutions Data Management System</h1>
+    <p class="lead mt-3">
+        Secure customer data platform built with ASP.NET Core and JavaScript.
+    </p>
+
+    <div class="mt-4">
+        <a href="/Customers" class="btn btn-primary btn-lg">
+            Manage Customers
+        </a>
+
+        <a id="homeLoginBtn" href="/Account/Login"
+               class="btn btn-outline-secondary btn-lg ms-2">
+            Login
+        </a>
+        <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const token = sessionStorage.getItem("jwt");
+                        const loginBtn = document.getElementById("homeLoginBtn");
+
+                        if (token && loginBtn) {
+                            loginBtn.style.display = "none";
+                        }
+                    });
+        </script>
+    </div>
+</div>

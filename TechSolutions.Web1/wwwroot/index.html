@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TechSolutions - Customers</title>
+</head>
+<body>
+    <h1>Customers</h1>
+    <button id="logoutBtn">Logout</button>
+
+    <p id="msg"></p>
+
+    <h3 id="formTitle">Add Customer</h3>
+
+    <form id="customerForm">
+        <!-- Hidden fields for edit mode -->
+        <input type="hidden" id="editId" />
+        <input type="hidden" id="editRowVersion" />
+
+        <input id="firstName" placeholder="First name" required />
+        <input id="lastName" placeholder="Last name" required />
+        <input id="email" type="email" placeholder="Email" required />
+        <input id="phone" placeholder="Phone" />
+
+        <button type="submit" id="saveBtn">Add</button>
+        <button type="button" id="cancelBtn" style="display:none;">Cancel</button>
+    </form>
+
+    <h3>Customer List</h3>
+    <table border="1" cellpadding="6">
+        <thead>
+            <tr>
+                <th>First</th>
+                <th>Last</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Updated</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+    </table>
+
+    <script src="app.js"></script>
+    <script>
+        // Redirect if no token
+        if (!localStorage.getItem("token")) {
+            window.location.href = "/login.html";
+        }
+        window.App.initCustomersPage();
+    </script>
+</body>
+</html>

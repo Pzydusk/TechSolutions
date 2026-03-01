@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Edit Customer";
+    var id = (Guid)ViewBag.Id;
+}
+
+<h2>Edit Customer</h2>
+
+<div class="mb-3">
+    <label class="form-label">First Name</label>
+    <input id="firstName" class="form-control" maxlength="50" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Last Name</label>
+    <input id="lastName" class="form-control" maxlength="50" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <input id="email" type="email" class="form-control" maxlength="255" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Phone</label>
+    <input id="phone" class="form-control" maxlength="20" />
+</div>
+
+<!-- store RowVersion from API -->
+<input type="hidden" id="rowVersion" />
+
+<div id="error" class="text-danger mb-3"></div>
+
+<button class="btn btn-primary" onclick="saveCustomer()">Save</button>
+<a class="btn btn-secondary" href="/Customers">Back</a>
+
+<script src="~/js/api.js"></script>
+
+<script>
+    const customerId = "@id";
+
+    function showError(msg) {
+        document.getElementById("error").innerText = msg || "";
+    }
+
+    async function loadCustomer() {
+        showError("");
+
+        const res = await apiFetch(`/api/customers/${customerId}`);
+        if (!res) return;
+
+        if (res.status === 404) {
+            showError("Customer not found.");
+            return;
+        }
+
+        if (!res.ok) {
+            showError("Failed to load customer.");
+            return;
+        }
+
+        const c = await res.json();
+
+        document.getElementById("firstName").value = c.firstName ?? "";
+        document.getElementById("lastName").value = c.lastName ?? "";
+        document.getElementById("email").value = c.email ?? "";
+        document.getElementById("phone").value = c.phone ?? "";
+
+        // IMPORTANT: keep rowVersion for concurrency (byte[] comes as base64 in JSON)
+        document.getElementById("rowVersion").value = c.rowVersion;
+    }
+
+    async function saveCustomer() {
+        showError("");
+
+        const dto = {
+            firstName: document.getElementById("firstName").value.trim(),
+            lastName: document.getElementById("lastName").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            phone: document.getElementById("phone").value.trim() || null,
+            rowVersion: document.getElementById("rowVersion").value
+        };
+
+        if (!dto.firstName || !dto.lastName || !dto.email) {
+            showError("First name, last name and email are required.");
+            return;
+        }
+
+        const res = await apiFetch(`/api/customers/${customerId}`, {
+            method: "PUT",
+            body: JSON.stringify(dto)
+        });
+        if (!res) return;
+
+        if (res.status === 409) {
+            const msg = await res.text();
+
+            // could be duplicate email OR concurrency conflict
+            showError(msg || "Conflict occurred. Please reload and try again.");
+
+            // If it was concurrency, re-load the latest record so rowVersion updates
+            await loadCustomer();
+            return;
+        }
+
+        if (res.status === 400) {
+            showError("Validation failed. Please check your inputs.");
+            return;
+        }
+
+        if (!res.ok) {
+            showError("Update failed.");
+            return;
+        }
+
+        window.location.href = "/Customers";
+    }
+
+    loadCustomer();
+</script>

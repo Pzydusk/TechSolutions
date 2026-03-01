@@ -1,0 +1,8 @@
+﻿@{
+    ViewData["Title"] = "Logout";
+}
+
+<script>
+    sessionStorage.removeItem("jwt");
+    window.location.href = "/Account/Login";
+</script>

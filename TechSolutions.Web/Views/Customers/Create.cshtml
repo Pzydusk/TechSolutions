@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Create Customer";
+}
+
+<h2>Create Customer</h2>
+
+<div class="mb-3">
+    <label class="form-label">First Name</label>
+    <input id="firstName" class="form-control" maxlength="50" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Last Name</label>
+    <input id="lastName" class="form-control" maxlength="50" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <input id="email" type="email" class="form-control" maxlength="255" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Phone</label>
+    <input id="phone" class="form-control" maxlength="20" />
+</div>
+
+<div id="error" class="text-danger mb-3"></div>
+
+<button class="btn btn-primary" onclick="createCustomer()">Save</button>
+<a class="btn btn-secondary" href="/Customers">Cancel</a>
+
+<script src="~/js/api.js"></script>
+
+<script>
+    function showError(msg) {
+        document.getElementById("error").innerText = msg || "";
+    }
+
+    async function createCustomer() {
+        showError("");
+
+        const dto = {
+            firstName: document.getElementById("firstName").value.trim(),
+            lastName: document.getElementById("lastName").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            phone: document.getElementById("phone").value.trim() || null
+        };
+
+        // quick client-side checks (server still validates)
+        if (!dto.firstName || !dto.lastName || !dto.email) {
+            showError("First name, last name and email are required.");
+            return;
+        }
+
+        const res = await apiFetch("/api/customers", {
+            method: "POST",
+            body: JSON.stringify(dto)
+        });
+        if (!res) return;
+
+        if (res.status === 409) {
+            const msg = await res.text();
+            showError(msg || "A customer with this email already exists.");
+            return;
+        }
+
+        if (res.status === 400) {
+            showError("Validation failed. Please check your inputs.");
+            return;
+        }
+
+        if (!res.ok) {
+            showError("Create failed.");
+            return;
+        }
+
+        window.location.href = "/Customers";
+    }
+</script>
